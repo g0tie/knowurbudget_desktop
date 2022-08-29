@@ -31,6 +31,7 @@ const Register = ({}) => {
 
       dispatch({type: "setError", payload: false});
       dispatch({type: "setLoggedState", payload: true});
+      dispatch({type: "persistData"});
       setVisible(false);
       navigate("/");
     }

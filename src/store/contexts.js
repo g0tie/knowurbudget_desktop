@@ -5,8 +5,10 @@ import {
   updateData, 
   getExpensesByType, 
   insertData,
-  deleteData
+  deleteData,
+  persistData
 } from "../store/database";
+import { syncData } from "../api";
 
 const MainContext = React.createContext();
 
@@ -52,6 +54,24 @@ function MainReducer(state, action) {
           logged: action.payload
         }
       }
+      
+      case 'switchUser': {
+        const actualUserId = state.currentUser;
+        const userDatas = syncData(action.payload);
+        const totalExpenses = calculateTotalExpenses(userDatas.expenses);
+
+        return {...userDatas,
+          logged: true,
+          currentUser: action.payload,
+          previousUser: actualUserId,
+          totalExpenses
+        }
+      }
+
+      case 'persistData': {
+        persistData(state);
+        return state;
+      }
 
       default: {
         throw new Error(`Unhandled action type: ${action.type}`)
@@ -73,7 +93,9 @@ function MainProvider({children}) {
           name:"Pablo"
         },
         error:false,
-        logged: false
+        logged: false,
+        childrenAccounts: [],
+        currentUser: null
     })
 
     const value = {state, dispatch}

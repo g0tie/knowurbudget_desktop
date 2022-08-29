@@ -1,9 +1,12 @@
 import { useState } from "react";
 import React from "react";
+import { useMainContext } from "../store/contexts";
 
 const ProfileIcon = ({username}) => {
 
     const [isOpen, setIsOpen] = useState(false);
+    const { state, dispatch } = useMainContext();
+
     return (
       <div className="absolute right-2 top-2">
          <button 
@@ -18,7 +21,25 @@ const ProfileIcon = ({username}) => {
          { isOpen && 
             <div className=" absolute right-0 mt-2 w-48 bg-white py-2 rounded-lg shadow-lg">
                <span className="px-4 py-2 w-full block border-b-2 ">{username}</span>
-                <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#">Déconnexion</a>
+
+
+               { 
+                  state.childrenAccounts.length > 0 && <div>
+                     { state.childrenAccounts.map(account => {
+                        return (
+                           <div>
+                              <button onClick={(e) => dispatch({type: "switchUser", payload: account.id })} >{account.username}</button>
+                           </div> 
+                        )
+                     })}
+
+                     { state.previousUser && <button onClick={(e) => dispatch({type: "switchUser", payload: state.previousUser })}>Go back to parent account</button>
+                     
+                     }
+                  </div>
+               }
+
+               <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#">Déconnexion</a>
             </div>
          }
          

@@ -22,6 +22,23 @@ const  createTables = async () =>
     }
 }
 
+const persistData = async (data) => {
+    try {
+
+        await alasql(`DELETE FROM Expenses`);
+        await alasql(`DELETE FROM Limit`);
+        
+        data.expenses.map(expense => {
+            insertData('expenses', expense)
+        });
+
+        insertData("limit", data.limit);
+
+    } catch (e) {
+        console.error(`Error occured: ${e}`);
+    }
+}
+
 const insertData = async (table,payload) =>
 {
     try {
@@ -127,5 +144,6 @@ export {
     updateData,
     deleteData,
     getExpensesByType,
-    getByDate
+    getByDate,
+    persistData
 }

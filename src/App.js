@@ -18,9 +18,7 @@ function App() {
       <Router>
         <Routes>
               <Route path="/" element={
-                <RequireAuth>
                   <Dashboard />
-                </RequireAuth>
               } />
               
               <Route path="/login" element={
