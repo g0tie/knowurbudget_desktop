@@ -5,7 +5,15 @@ import { useMainContext } from '../store/contexts';
 import { getCurrentUser } from '../store/database';
 
 const Dashboard  = () => {
- 
+  const { state, dispatch } = useMainContext();
+
+
+  useEffect(() => {
+    //init context
+    const isUserLogged = window.localStorage.getItem("logged");
+    dispatch({type:"initContext", payload: isUserLogged});
+  } , []);
+
   return (
     <div className="App p-8">
     <Layout.Header />

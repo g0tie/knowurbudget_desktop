@@ -56,15 +56,15 @@ function MainReducer(state, action) {
       }
       
       case 'switchUser': {
-        const actualUserId = state.currentUser;
         const userDatas = syncData(action.payload);
         const totalExpenses = calculateTotalExpenses(userDatas.expenses);
-
+        
         return {...userDatas,
           logged: true,
-          currentUser: action.payload,
-          previousUser: actualUserId,
-          totalExpenses
+          totalExpenses,
+          expenses: userDatas.expenses,
+          user: {name: userDatas.username},
+          limit: userDatas.limit
         }
       }
 
@@ -72,6 +72,35 @@ function MainReducer(state, action) {
         persistData(state);
         return state;
       }
+
+      case 'initContext': {
+
+        if (payload) {
+          const userDatas = syncData(getCurrentUser());
+          const totalExpenses = calculateTotalExpenses(userDatas.expenses);
+  
+          return {...userDatas,
+            logged: true,
+            totalExpenses,
+            expenses: userDatas.expenses,
+            user: {name: userDatas.username},
+            limit: userDatas.limit
+          }
+        }
+
+        const expenses = getData(0, "expenses");
+        const totalExpenses = calculateTotalExpenses(expenses);
+
+        return {
+          ...state, 
+          limit: getData(0, "limit"),
+          expenses,
+          totalExpenses,
+          logged: false,
+          user : {name: getData("0", "users").name},
+        }
+      }
+
 
       default: {
         throw new Error(`Unhandled action type: ${action.type}`)

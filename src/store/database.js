@@ -7,7 +7,7 @@ function getCurrentUser()
 
 function setCurrentUser(value)
 {
-    window.localStorage.getItem('currentUser', value);
+    window.localStorage.setItem('currentUser', value);
 }
 
 const createDatabase = () =>
@@ -46,7 +46,8 @@ const persistData = async (data) => {
         });
 
         await alasql(`INSERT INTO Limit VALUES ? WHERE id = ;`, [data.limit, data.id]);
-
+        await  window.localStorage.setItem("logged", true);
+        
     } catch (e) {
         console.error(`Error occured: ${e}`);
     }
