@@ -11,6 +11,7 @@ function getTypeName(id) {
 
 function calculateTotalExpenses(expenses)
 {   
+    if (!expenses) return 0;
     return expenses.reduce((prev, curr) => prev + parseInt(curr.amount), 0);
 }
 

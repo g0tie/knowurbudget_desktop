@@ -10,7 +10,7 @@ const Dashboard  = () => {
 
   useEffect(() => {
     //init context
-    const isUserLogged = window.localStorage.getItem("logged");
+    const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ;
     dispatch({type:"initContext", payload: isUserLogged});
   } , []);
 

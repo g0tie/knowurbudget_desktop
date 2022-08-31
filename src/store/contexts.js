@@ -74,8 +74,7 @@ function MainReducer(state, action) {
       }
 
       case 'initContext': {
-
-        if (payload) {
+        if (action.payload) {
           const userDatas = syncData(getCurrentUser());
           const totalExpenses = calculateTotalExpenses(userDatas.expenses);
   
@@ -84,23 +83,26 @@ function MainReducer(state, action) {
             totalExpenses,
             expenses: userDatas.expenses,
             user: {name: userDatas.username},
-            limit: userDatas.limit
+            limit: { value: userDatas.limit }
           }
         }
 
         const expenses = getData(0, "expenses");
         const totalExpenses = calculateTotalExpenses(expenses);
-
         return {
           ...state, 
-          limit: getData(0, "limit"),
+          limit: { value: getData(0, "limit").amount },
           expenses,
           totalExpenses,
           logged: false,
-          user : {name: getData("0", "users").name},
+          user : {name: getData(0, "users").username},
         }
       }
 
+      case 'saveToServer': {
+        //save to server api request
+        return state;
+      }
 
       default: {
         throw new Error(`Unhandled action type: ${action.type}`)

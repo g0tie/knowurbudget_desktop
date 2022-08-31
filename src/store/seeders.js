@@ -23,7 +23,7 @@ async function createDefaultUser() {
         const limit = 500;
         const id  = 0;
 
-        if ( await !DB.getData(id, "users") ) {
+        if ( !DB.getData(id, "users") ) {
             DB.insertData("users", {id:id, username: username});
             DB.insertData("limit", {amount: limit, user_id: id});
             DB.setCurrentUser(id);

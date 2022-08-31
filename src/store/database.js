@@ -23,7 +23,7 @@ const  createTables = async () =>
 {
     try {
 
-        await alasql(`CREATE TABLE IF NOT EXISTS Users(id INT PRIMARY KEY, username STRING);`)
+        await alasql(`CREATE TABLE IF NOT EXISTS Users(id INT PRIMARY KEY, username STRING, UNIQUE(id));`)
         
         await alasql(`CREATE TABLE IF NOT EXISTS Types(id INT AUTOINCREMENT PRIMARY KEY, name STRING, user_id INT REFERENCES Users(id));`);
         
@@ -47,7 +47,7 @@ const persistData = async (data) => {
 
         await alasql(`INSERT INTO Limit VALUES ? WHERE id = ;`, [data.limit, data.id]);
         await  window.localStorage.setItem("logged", true);
-        
+
     } catch (e) {
         console.error(`Error occured: ${e}`);
     }
@@ -82,16 +82,19 @@ const getData = (id, table) =>
 {
     switch (table) {
         case "expenses":
-           return alasql(`SELECT * FROM Expenses WHERE id = ?`, [id]);
+           return alasql(`SELECT * FROM Expenses WHERE user_id = ?`, [id]);
 
         case "types":
-           return alasql(`SELECT * FROM Types WHERE id = ?`, [id])[0];
+           return alasql(`SELECT * FROM Types WHERE user_id = ?`, [id])[0];
 
         case "limit":
-           return alasql(`SELECT * FROM Limit WHERE id = ?`, [id])[0];
+           return alasql(`SELECT * FROM Limit WHERE user_id = ?`, [id])[0];
            
         case "users":
             return alasql(`SELECT * FROM Users WHERE id = ?`, [id])[0];
+            
+        default:
+            return
     }
 
 }

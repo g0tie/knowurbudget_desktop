@@ -1,11 +1,13 @@
 import { useState } from "react";
 import React from "react";
 import { useMainContext } from "../store/contexts";
+import { useNavigate } from "react-router-dom";
 
 const ProfileIcon = ({username}) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const { state, dispatch } = useMainContext();
+    const navigate = useNavigate();
 
     function handleLogout(e)
     {
@@ -43,6 +45,7 @@ const ProfileIcon = ({username}) => {
                      }
                   </div>
                }
+               { !state.logged && <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#" onClick={() => navigate('/login')}>Connexion / Inscription</a>}
 
                { state.logged && <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#" onClick={handleLogout}>Déconnexion</a> }
             </div>
