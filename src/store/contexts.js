@@ -1,5 +1,5 @@
 import React from "react";
-import {getDatas, getData} from "./database";
+import {getDatas, getData, getCurrentUser} from "./database";
 import { calculateTotalExpenses } from "../helpers/common";
 import {
   updateData, 
@@ -15,12 +15,12 @@ const MainContext = React.createContext();
 function MainReducer(state, action) {
     switch (action.type) {
       case 'setLimit': {
-        updateData(1,'limit', action.payload);
+        updateData(getCurrentUser(),'limit', action.payload);
         return state;
       }
 
       case 'removeExpense': {
-        deleteData(action.payload, 'expenses');
+        deleteData(action.payload, 'expenses', getCurrentUser());
         return {
           ...state,
           expenses: state.expenses.filter(expense => expense.id !== action.payload),
@@ -29,7 +29,7 @@ function MainReducer(state, action) {
       }
 
       case 'addExpense': {
-        insertData('expenses', action.payload);
+        insertData('expenses', action.payload, getCurrentUser());
         return {...state,
           expenses: getDatas('expenses'),
           totalExpenses: calculateTotalExpenses(state.expenses)
@@ -37,7 +37,7 @@ function MainReducer(state, action) {
       }
 
       case 'sortExpensesByType': {
-        let expenses = getExpensesByType(parseInt(action.payload));
+        let expenses = getExpensesByType(parseInt(action.payload), getCurrentUser());
         return {...state, 
           expenses
         }
@@ -86,7 +86,7 @@ function MainProvider({children}) {
 
     const [state, dispatch] = React.useReducer(MainReducer, {
         types: getDatas("types"),
-        limit: {value: getData(1, 'limit').amount},
+        limit: 0,
         expenses,
         totalExpenses,
         user: {

@@ -7,6 +7,11 @@ const ProfileIcon = ({username}) => {
     const [isOpen, setIsOpen] = useState(false);
     const { state, dispatch } = useMainContext();
 
+    function handleLogout(e)
+    {
+      dispatch({type:"logout"});
+    }
+
     return (
       <div className="absolute right-2 top-2">
          <button 
@@ -39,7 +44,7 @@ const ProfileIcon = ({username}) => {
                   </div>
                }
 
-               <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#">Déconnexion</a>
+               { state.logged && <a className="mt-2 block px-4 py-2 hover:bg-indigo-600 hover:text-white" href="#" onClick={handleLogout}>Déconnexion</a> }
             </div>
          }
          

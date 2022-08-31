@@ -3,6 +3,7 @@ import { register } from "../api";
 import Alert from "../components/Alert";
 import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../store/contexts";
+import { setCurrentUser } from "../store/database";
 
 const Register = ({}) => {
     const [password, setPassword] = useState('');
@@ -32,6 +33,9 @@ const Register = ({}) => {
       dispatch({type: "setError", payload: false});
       dispatch({type: "setLoggedState", payload: true});
       dispatch({type: "persistData"});
+
+      setCurrentUser(response.id);
+      
       setVisible(false);
       navigate("/");
     }

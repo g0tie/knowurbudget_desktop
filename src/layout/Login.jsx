@@ -3,6 +3,7 @@ import { login } from "../api";
 import { useNavigate } from 'react-router-dom'
 import Alert from "../components/Alert";
 import { useMainContext } from "../store/contexts";
+import { setCurrentUser } from "../store/database";
 
 const Login = ({}) => {
     const [password, setPassword] = useState('');
@@ -29,6 +30,9 @@ const Login = ({}) => {
       dispatch({type: "setError", payload: false});
       dispatch({type: "setLoggedState", payload: true});
       dispatch({type: "persistData"});
+      
+      setCurrentUser(response.id);
+
       setVisible(false);
       navigate("/");
     }

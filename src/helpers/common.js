@@ -103,8 +103,6 @@ function getTotalExpensesByType(expenses, types)
     return results;
 }
 
-
-
 export {
     calculatePercentage,
     getTypeName,

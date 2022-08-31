@@ -1,5 +1,15 @@
 import * as alasql from 'alasql';
 
+function getCurrentUser()
+{
+    return window.localStorage.getItem('currentUser');
+}
+
+function setCurrentUser(value)
+{
+    window.localStorage.getItem('currentUser', value);
+}
+
 const createDatabase = () =>
 {
     alasql(`
@@ -13,9 +23,13 @@ const  createTables = async () =>
 {
     try {
 
-        alasql(`CREATE TABLE IF NOT EXISTS Types(id INT AUTOINCREMENT PRIMARY KEY, name STRING);`);
-        alasql(`CREATE TABLE IF NOT EXISTS Expenses(id INT AUTOINCREMENT PRIMARY KEY, name STRING, amount INT, date DATETIME, typeid INT REFERENCES Types(id));`)
-        alasql(`CREATE TABLE IF NOT EXISTS Limit(id INT AUTOINCREMENT PRIMARY KEY, amount INT, date DATETIME);`)
+        await alasql(`CREATE TABLE IF NOT EXISTS Users(id INT PRIMARY KEY, username STRING);`)
+        
+        await alasql(`CREATE TABLE IF NOT EXISTS Types(id INT AUTOINCREMENT PRIMARY KEY, name STRING, user_id INT REFERENCES Users(id));`);
+        
+        await alasql(`CREATE TABLE IF NOT EXISTS Expenses(id INT AUTOINCREMENT PRIMARY KEY, name STRING, amount INT, date DATETIME, typeid INT REFERENCES Types(id), user_id INT REFERENCES Users(id));`)
+        
+        await alasql(`CREATE TABLE IF NOT EXISTS Limit(id INT AUTOINCREMENT PRIMARY KEY, amount INT, date DATETIME, user_id INT REFERENCES Users(id) );`)
         
     } catch (e) {
         console.error(`Error occured: ${e}`);
@@ -25,14 +39,13 @@ const  createTables = async () =>
 const persistData = async (data) => {
     try {
 
-        await alasql(`DELETE FROM Expenses`);
-        await alasql(`DELETE FROM Limit`);
+        await alasql(`INSERT INTO Users VALUES ? WHERE id = ;`, [data.username, data.id]);
         
-        data.expenses.map(expense => {
-            insertData('expenses', expense)
+        await data.expenses.map(expense => {
+            alasql(`INSERT INTO Expenses VALUES ? WHERE id = ;`, [expense, data.id]);
         });
 
-        insertData("limit", data.limit);
+        await alasql(`INSERT INTO Limit VALUES ? WHERE id = ;`, [data.limit, data.id]);
 
     } catch (e) {
         console.error(`Error occured: ${e}`);
@@ -54,6 +67,10 @@ const insertData = async (table,payload) =>
             case "limit":
                 alasql(`INSERT INTO Limit VALUES ?`, [payload]);
             break;
+            
+            case "users":
+                alasql(`INSERT INTO Users VALUES ?`, [payload]);
+            break;
         }
     } catch (e) {
         console.error(`Error occured: ${e}`);
@@ -71,27 +88,30 @@ const getData = (id, table) =>
 
         case "limit":
            return alasql(`SELECT * FROM Limit WHERE id = ?`, [id])[0];
+           
+        case "users":
+            return alasql(`SELECT * FROM Users WHERE id = ?`, [id])[0];
     }
 
 }
 
-const getExpensesByType = (typeId) => {
-    if (isNaN(typeId)) return getDatas("expenses");
+const getExpensesByType = (typeId, userId) => {
+    if (isNaN(typeId)) return getDatas("expenses", userId);
 
-    return alasql(`SELECT * FROM Expenses WHERE typeid = ?`, [typeId])
+    return alasql(`SELECT * FROM Expenses WHERE typeid = ? AND user_id = ?`, [typeId, userId])
     .map(expense => ({...expense, typeid:typeId})  );
 }
 
-const getDatas = (table) => {
+const getDatas = (table, userId) => {
     switch (table) {
         case "expenses":
-           return alasql(`SELECT * FROM Expenses`);
+           return alasql(`SELECT * FROM Expenses WHERE user_id = ?`, [userId]);
 
         case "types":
-           return alasql(`SELECT * FROM Types`);
+           return alasql(`SELECT * FROM Types WHERE user_id = ?`, [userId]);
 
         case "limit":
-           return alasql(`SELECT * FROM Limit`);
+           return alasql(`SELECT * FROM Limit WHERE user_id = ?`, [userId]);
     }
 }
 
@@ -103,33 +123,33 @@ const updateData = (id, table, payload) =>
 {
     switch (table) {
         case "expenses":
-            alasql(`UPDATE FROM Expenses SET ? WHERE id = ?`, [payload, id]);
+            alasql(`UPDATE FROM Expenses SET ? WHERE user_id = ?`, [payload, id]);
         break;
 
         case "types":
-            alasql(`UPDATE FROM Types SET ? WHERE id = ?`, [payload, id]);
+            alasql(`UPDATE FROM Types SET ? WHERE user_id = ?`, [payload, id]);
         break;
 
         case "limit":
-            alasql(`UPDATE Limit SET amount = ? WHERE id = ?`, [payload, id]);
+            alasql(`UPDATE Limit SET amount = ? WHERE user_id = ?`, [payload, id]);
         break;
     }
 
 }
 
-const deleteData = (id, table) =>
+const deleteData = (id, table, userId) =>
 {
     switch (table) {
         case "expenses":
-            alasql(`DELETE FROM Expenses WHERE id = ?`, [id]);
+            alasql(`DELETE FROM Expenses WHERE id = ? AND ? `, [id, userId]);
         break;
 
         case "types":
-            alasql(`DELETE FROM Types WHERE id = ?`, [id]);
+            alasql(`DELETE FROM Types WHERE id = ?AND ? `, [id, userId]);
         break;
 
         case "limit":
-            alasql(`DELETE FROM Limit WHERE id = ?`, [id]);
+            alasql(`DELETE FROM Limit WHERE id = ? AND ? `, [id, userId]);
         break;
     }
 
@@ -145,5 +165,7 @@ export {
     deleteData,
     getExpensesByType,
     getByDate,
-    persistData
+    persistData,
+    getCurrentUser,
+    setCurrentUser
 }

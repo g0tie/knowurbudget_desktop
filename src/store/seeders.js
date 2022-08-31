@@ -15,13 +15,26 @@ function seedTypes() {
     ].forEach(type => DB.insertData("types", {name:type}));
 }
 
-function createLocalLimit() {
-    if (DB.getData('limit') > 0) return;
+async function createDefaultUser() {
+    
+    try {
+        
+        const username = "default";
+        const limit = 500;
+        const id  = 0;
 
-    DB.insertData('limit', {amount:500});
+        if ( await !DB.getData(id, "users") ) {
+            DB.insertData("users", {id:id, username: username});
+            DB.insertData("limit", {amount: limit, user_id: id});
+            DB.setCurrentUser(id);
+        }
+
+    } catch (e) {
+        console.error(`Error occured: ${e}`);
+    }
 }
 
 export {
     seedTypes,
-    createLocalLimit
+    createDefaultUser
 }
