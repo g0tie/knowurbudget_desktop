@@ -1,5 +1,5 @@
 import React from "react";
-import {getDatas, getData, getCurrentUser} from "./database";
+import {getDatas, getData, getCurrentUser, getJWT} from "./database";
 import { calculateTotalExpenses } from "../helpers/common";
 import {
   updateData, 
@@ -56,7 +56,7 @@ function MainReducer(state, action) {
       }
       
       case 'switchUser': {
-        const userDatas = syncData(action.payload);
+        const userDatas = syncData(action.payload, getJWT());
         const totalExpenses = calculateTotalExpenses(userDatas.expenses);
         
         return {...userDatas,
@@ -75,7 +75,7 @@ function MainReducer(state, action) {
 
       case 'initContext': {
         if (action.payload) {
-          const userDatas = syncData(getCurrentUser());
+          const userDatas = syncData(getCurrentUser(),  getJWT());
           const totalExpenses = calculateTotalExpenses(userDatas.expenses);
   
           return {...userDatas,

@@ -1,5 +1,14 @@
 import * as alasql from 'alasql';
 
+
+function getJWT() {
+    return window.localStorage.getItem('JWT');
+}
+
+function setJWT(value) {
+    window.localStorage.setItem('JWT', value);
+}
+
 function getCurrentUser()
 {
     return parseInt( window.localStorage.getItem('currentUser') );
@@ -170,5 +179,7 @@ export {
     getByDate,
     persistData,
     getCurrentUser,
-    setCurrentUser
+    setCurrentUser,
+    getJWT, 
+    setJWT
 }

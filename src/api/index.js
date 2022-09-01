@@ -25,12 +25,8 @@ const login = (newUser) => {
 
 }
 
-const logout = (newUser) => {
-    return axiosWrapper(newUser, apiConfig, `${process.env.REACT_APP_API_URL}/auth/signout`);
-}
-
-const syncData = (userId) => {
-    return axiosWrapper({userId}, apiConfig, `${process.env.REACT_APP_API_URL}/user/datas`);
+const syncData = (userId, token) => {
+    return axiosWrapper({userId, token}, apiConfig, `${process.env.REACT_APP_API_URL}/user/datas`);
 }
 
 
@@ -38,5 +34,4 @@ export {
     register, 
     login,
     syncData,
-    logout
 }
