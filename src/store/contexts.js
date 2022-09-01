@@ -16,7 +16,7 @@ function MainReducer(state, action) {
     switch (action.type) {
       case 'setLimit': {
         updateData(getCurrentUser(),'limit', action.payload);
-        return state;
+        return {...state, limit: {value: action.payload}};
       }
 
       case 'removeExpense': {
@@ -29,9 +29,9 @@ function MainReducer(state, action) {
       }
 
       case 'addExpense': {
-        insertData('expenses', action.payload, getCurrentUser());
+        insertData('expenses', action.payload);
         return {...state,
-          expenses: getDatas('expenses'),
+          expenses: getDatas('expenses', getCurrentUser()),
           totalExpenses: calculateTotalExpenses(state.expenses)
         };
       }
@@ -87,7 +87,7 @@ function MainReducer(state, action) {
           }
         }
 
-        const expenses = getData(0, "expenses");
+        const expenses = getDatas("expenses", getCurrentUser());
         const totalExpenses = calculateTotalExpenses(expenses);
         return {
           ...state, 

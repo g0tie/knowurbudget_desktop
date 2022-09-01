@@ -2,7 +2,7 @@ import * as alasql from 'alasql';
 
 function getCurrentUser()
 {
-    return window.localStorage.getItem('currentUser');
+    return parseInt( window.localStorage.getItem('currentUser') );
 }
 
 function setCurrentUser(value)
@@ -85,7 +85,7 @@ const getData = (id, table) =>
            return alasql(`SELECT * FROM Expenses WHERE user_id = ?`, [id]);
 
         case "types":
-           return alasql(`SELECT * FROM Types WHERE user_id = ?`, [id])[0];
+           return alasql(`SELECT * FROM Types WHERE id = ?`, [id])[0];
 
         case "limit":
            return alasql(`SELECT * FROM Limit WHERE user_id = ?`, [id])[0];
@@ -101,18 +101,17 @@ const getData = (id, table) =>
 
 const getExpensesByType = (typeId, userId) => {
     if (isNaN(typeId)) return getDatas("expenses", userId);
-
     return alasql(`SELECT * FROM Expenses WHERE typeid = ? AND user_id = ?`, [typeId, userId])
     .map(expense => ({...expense, typeid:typeId})  );
 }
 
-const getDatas = (table, userId) => {
+const getDatas = (table, userId = 0) => {
     switch (table) {
         case "expenses":
            return alasql(`SELECT * FROM Expenses WHERE user_id = ?`, [userId]);
 
         case "types":
-           return alasql(`SELECT * FROM Types WHERE user_id = ?`, [userId]);
+           return alasql(`SELECT * FROM Types`);
 
         case "limit":
            return alasql(`SELECT * FROM Limit WHERE user_id = ?`, [userId]);

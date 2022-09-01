@@ -7,9 +7,7 @@ import { getCurrentUser } from '../store/database';
 const Dashboard  = () => {
   const { state, dispatch } = useMainContext();
 
-
   useEffect(() => {
-    //init context
     const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ;
     dispatch({type:"initContext", payload: isUserLogged});
   } , []);

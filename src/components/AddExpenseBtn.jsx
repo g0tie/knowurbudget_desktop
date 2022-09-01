@@ -2,6 +2,7 @@ import Modal from "./Modal";
 import React, { useState } from 'react';
 import { useMainContext } from '../store/contexts';
 import { getDatetime } from '../helpers/common';
+import { getCurrentUser } from "../store/database";
 
 const AddExpenseBtn = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,8 +22,9 @@ const AddExpenseBtn = () => {
         const expense = {
             name: title,
             amount,
-            typeid:type,
-            date: getDatetime()
+            typeid: parseInt( type ),
+            date: getDatetime(),
+            user_id: parseInt( getCurrentUser() )
         }
         dispatch({type:'addExpense', payload:expense});
         setIsOpen(false);

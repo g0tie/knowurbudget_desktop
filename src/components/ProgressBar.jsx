@@ -3,16 +3,25 @@ import Modal from "./Modal";
 import { calculatePercentage } from '../helpers/common';
 import { useMainContext } from '../store/contexts';
 
+
 const ProgressBar = ({}) => {
     let {state, dispatch} = useMainContext();
     
     const [isOpen, setIsOpen] = useState(false);
     const [limit, setLimit] = useState(state.limit.value);
+    const [color, setColor] = useState("#4F46E5");
     const [progress, setProgress] = useState(calculatePercentage(state.totalExpenses, limit));
 
+    function setProgressColor() {
+      if (progress > 97) setColor("#dc2626")
+      else setColor("#4F46E5")
+    }
+
     useEffect(() => {
-      setProgress(calculatePercentage(state.totalExpenses, limit));
-    }, [state.totalExpenses, limit]);
+      setProgress(calculatePercentage(state.totalExpenses, state.limit.value));
+      setProgressColor();
+
+    }, [state.limit.value, state.totalExpenses, limit, progress]);
     
     
     function changeLimit()
@@ -24,12 +33,12 @@ const ProgressBar = ({}) => {
       <div className="flex flex-col" style={{width: "400px"}}>
         
         <div className="bg-gray-200  h-10" >
-            <div className="bg-indigo-600 h-10" style={{width: progress + "%"}}></div>
+            <div className={`h-10`} style={{width: progress + "%", backgroundColor: color}}></div>
         </div>
         
  
       <div className="flex felx-row justify-end">
-         <span className="text-right">{state.totalExpenses} / {limit}</span>
+         <span className="text-right">{state.totalExpenses} / {state.limit.value}</span>
          <button 
          onClick={() => setIsOpen(true)}
          style={{transform: "translateY(-13px)"}} className="text-indigo-600 text-center ml-2 shadow-lg rounded-full bg-white h-10 w-10">
