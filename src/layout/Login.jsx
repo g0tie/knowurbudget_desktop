@@ -32,8 +32,8 @@ const Login = ({}) => {
       dispatch({type: "persistData"});
       
       setCurrentUser(response.id);
-      setJWT(response.token);
-      
+      setJWT( JSON.parse( response.token ));
+
       setVisible(false);
       navigate("/");
     }
