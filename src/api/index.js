@@ -5,10 +5,19 @@ const apiConfig = { headers: {
     "Content-Type": "application/json"
 }}
 
-async function axiosWrapper(data, config, url, ) {
+async function axiosWrapper(method, data, config, url ) {
     try {
-        let res = await axios.post(url, data, config);
-        return res;
+        switch (method) {
+            case "get":
+                return await axios.get(url,{
+                    params: data
+                }, 
+                config
+            );
+            
+            case "post":
+                return await axios.post(url, data, config);
+        }
 
     } catch (e) {
         console.error("erreur: " + e);
@@ -17,16 +26,16 @@ async function axiosWrapper(data, config, url, ) {
 }
 
 const register = (newUser) => {
-    return axiosWrapper(newUser, apiConfig, `${process.env.REACT_APP_API_URL}/auth/signup`);
+    return axiosWrapper("post", newUser, apiConfig, `${process.env.REACT_APP_API_URL}/auth/signup`);
 }
 
 const login = (newUser) => {
-    return axiosWrapper(newUser, apiConfig, `${process.env.REACT_APP_API_URL}/auth/signin`);
+    return axiosWrapper("post", newUser, apiConfig, `${process.env.REACT_APP_API_URL}/auth/signin`);
 
 }
 
 const syncData = (userId, token) => {
-    return axiosWrapper({userId, token}, apiConfig, `${process.env.REACT_APP_API_URL}/user/datas`);
+    return axiosWrapper("get", {userId, token}, apiConfig, `${process.env.REACT_APP_API_URL}/users/datas`);
 }
 
 

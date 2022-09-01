@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { login } from "../api";
+import { login, syncData } from "../api";
 import { useNavigate } from 'react-router-dom'
 import Alert from "../components/Alert";
 import { useMainContext } from "../store/contexts";
-import { setCurrentUser, setJWT } from "../store/database";
+import { getCurrentUser, getJWT, setCurrentUser, setJWT } from "../store/database";
 
 const Login = ({}) => {
     const [password, setPassword] = useState('');
@@ -26,13 +26,17 @@ const Login = ({}) => {
         setVisible(true);
         return;
       } 
+      await setCurrentUser(response.data.id);
+      await setJWT( response.data.token );
+
+      let data = await syncData(getCurrentUser(), getJWT());
+
+      dispatch({type: "setUserData", payload: data.data});
 
       dispatch({type: "setError", payload: false});
       dispatch({type: "setLoggedState", payload: true});
-      dispatch({type: "persistData"});
       
-      setCurrentUser(response.id);
-      setJWT( JSON.parse( response.token ));
+
 
       setVisible(false);
       navigate("/");

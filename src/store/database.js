@@ -45,16 +45,24 @@ const  createTables = async () =>
     }
 }
 
-const persistData = async (data) => {
+const persistData = async (data, userId) => {
     try {
+        console.log(data)
+        
+        if (await getData(userId, "users"))  return;
 
-        await alasql(`INSERT INTO Users VALUES ? WHERE id = ;`, [data.username, data.id]);
+        await alasql(`DELETE FROM Users WHERE id = ?`, [userId]);
+        
+        await alasql(`DELETE FROM Expenses WHERE user_id = ?`, [userId]);
+        await alasql(`DELETE FROM Limit WHERE user_id = ?`, [userId]);
+
+        await alasql(`INSERT INTO Users VALUES ?`, [{ username:data.user.name, id:userId }]);
         
         await data.expenses.map(expense => {
-            alasql(`INSERT INTO Expenses VALUES ? WHERE id = ;`, [expense, data.id]);
+            alasql(`INSERT INTO Expenses VALUES ?`, [expense]);
         });
 
-        await alasql(`INSERT INTO Limit VALUES ? WHERE id = ;`, [data.limit, data.id]);
+        await alasql(`INSERT INTO Limit VALUES ?`, [{amount: data.limit.value, user_id: userId }]);
         await  window.localStorage.setItem("logged", true);
 
     } catch (e) {

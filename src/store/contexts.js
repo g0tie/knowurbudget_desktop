@@ -55,53 +55,33 @@ function MainReducer(state, action) {
         }
       }
       
-      case 'switchUser': {
-        const userDatas = syncData(action.payload, getJWT());
+      case 'setUserData': {
+        const userDatas = action.payload;
         const totalExpenses = calculateTotalExpenses(userDatas.expenses);
-        
-        return {...userDatas,
+        const newState = {...state,
           logged: true,
           totalExpenses,
           expenses: userDatas.expenses,
           user: {name: userDatas.username},
-          limit: userDatas.limit
+          limit: { value: parseInt( userDatas.limit.amount) }
         }
-      }
 
-      case 'persistData': {
-        persistData(state);
-        return state;
+        persistData(newState, getCurrentUser());
+        
+        return newState
       }
 
       case 'initContext': {
-        if (action.payload) {
-          const userDatas = syncData(getCurrentUser(),  getJWT());
-          const totalExpenses = calculateTotalExpenses(userDatas.expenses);
-  
-          return {...userDatas,
-            logged: true,
-            totalExpenses,
-            expenses: userDatas.expenses,
-            user: {name: userDatas.username},
-            limit: { value: userDatas.limit }
-          }
-        }
-
         const expenses = getDatas("expenses", getCurrentUser());
         const totalExpenses = calculateTotalExpenses(expenses);
         return {
           ...state, 
-          limit: { value: getData(0, "limit").amount },
+          limit: { value: getData(getCurrentUser(), "limit").amount },
           expenses,
           totalExpenses,
           logged: false,
-          user : {name: getData(0, "users").username},
+          user : {name: getData(getCurrentUser(), "users").username},
         }
-      }
-
-      case 'saveToServer': {
-        //save to server api request
-        return state;
       }
 
       default: {
