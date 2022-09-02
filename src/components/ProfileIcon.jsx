@@ -2,7 +2,7 @@ import { useState } from "react";
 import React from "react";
 import { useMainContext } from "../store/contexts";
 import { useNavigate } from "react-router-dom";
-import { setCurrentUser, remoteJWT, deleteUserData, setJWT } from "../store/database";
+import { setCurrentUser, remoteJWT, deleteUserData, setJWT, getCurrentUser } from "../store/database";
 import  {getDefaultUserData} from "../helpers/common";
 
 const ProfileIcon = ({username}) => {
@@ -14,9 +14,9 @@ const ProfileIcon = ({username}) => {
    async function handleLogout(e)
    {
       try {
+         await deleteUserData(getCurrentUser());
          await setCurrentUser(0);
          await remoteJWT();
-         await deleteUserData();
          await dispatch({type:"setLoggedState", payload: false});
 
          const newState = await getDefaultUserData(state);

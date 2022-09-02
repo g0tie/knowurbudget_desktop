@@ -51,7 +51,7 @@ const  createTables = async () =>
 
 const deleteUserData = async (userId) => {
     try {
-        await alasql(`DELETE FROM Users WHERE id = ?`, [userId]);
+        await alasql(`DELETE FROM Users WHERE id = ?`, [userId]) ;
         
         await alasql(`DELETE FROM Expenses WHERE user_id = ?`, [userId]);
         await alasql(`DELETE FROM Limit WHERE user_id = ?`, [userId]);
