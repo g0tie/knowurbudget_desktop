@@ -2,6 +2,8 @@ import { useState } from "react";
 import React from "react";
 import { useMainContext } from "../store/contexts";
 import { useNavigate } from "react-router-dom";
+import { setCurrentUser, remoteJWT, deleteUserData, setJWT } from "../store/database";
+import  {getDefaultUserData} from "../helpers/common";
 
 const ProfileIcon = ({username}) => {
 
@@ -9,10 +11,21 @@ const ProfileIcon = ({username}) => {
     const { state, dispatch } = useMainContext();
     const navigate = useNavigate();
 
-    function handleLogout(e)
-    {
-      dispatch({type:"logout"});
-    }
+   async function handleLogout(e)
+   {
+      try {
+         await setCurrentUser(0);
+         await remoteJWT();
+         await deleteUserData();
+         await dispatch({type:"setLoggedState", payload: false});
+
+         const newState = await getDefaultUserData(state);
+         await dispatch({type:"initContext", payload: newState});
+         await  window.localStorage.removeItem("logged")
+      } catch(e) {
+         console.error(`Error occured: ${e}`)
+      }
+   }
 
     return (
       <div className="absolute right-2 top-2">

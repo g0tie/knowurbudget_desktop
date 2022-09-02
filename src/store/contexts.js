@@ -1,5 +1,5 @@
 import React from "react";
-import {getDatas, getData, getCurrentUser, getJWT} from "./database";
+import {getDatas, getData, getCurrentUser, getJWT, setCurrentUser} from "./database";
 import { calculateTotalExpenses } from "../helpers/common";
 import {
   updateData, 
@@ -63,7 +63,7 @@ function MainReducer(state, action) {
           totalExpenses,
           expenses: userDatas.expenses,
           user: {name: userDatas.username},
-          limit: { value: parseInt( userDatas.limit.amount) }
+          limit: { value: parseInt( userDatas.limit.amount) },
         }
 
         persistData(newState, getCurrentUser());
@@ -72,16 +72,7 @@ function MainReducer(state, action) {
       }
 
       case 'initContext': {
-        const expenses = getDatas("expenses", getCurrentUser());
-        const totalExpenses = calculateTotalExpenses(expenses);
-        return {
-          ...state, 
-          limit: { value: getData(getCurrentUser(), "limit").amount },
-          expenses,
-          totalExpenses,
-          logged: false,
-          user : {name: getData(getCurrentUser(), "users").username},
-        }
+        return action.payload;
       }
 
       default: {

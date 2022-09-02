@@ -1,4 +1,4 @@
-import {getByDate, getData, getExpensesByType} from  "../store/database";
+import {getByDate, getData, getExpensesByType, getDatas, getCurrentUser} from  "../store/database";
 
 function calculatePercentage(value, max) {
     if (max < value) return 100;
@@ -77,7 +77,7 @@ function sortExpensesByWeek(types)
     let weekStringEnd =  new Date().getFullYear() + `-0${new Date().getMonth() + 1}-${weekEnd}`;
 
     return getTotalExpensesByType(
-        getByDate('expenses', weekStringStart, weekStringEnd),
+        getByDate('expenses', weekStringStart, weekStringEnd, getCurrentUser()),
         types
     );
 }
@@ -104,11 +104,31 @@ function getTotalExpensesByType(expenses, types)
     return results;
 }
 
+async function getDefaultUserData(state)
+{
+    const user =  await getData(getCurrentUser(), "users");
+    const limit = await  await getData(getCurrentUser(), "limit");
+    const expenses = await getDatas("expenses", getCurrentUser());
+    const totalExpenses = await calculateTotalExpenses(expenses);
+
+    let newState = await {
+      ...state, 
+      limit: { value: limit.amount },
+      expenses,
+      totalExpenses,
+      user : {name:user.username},
+      logged: false
+    } ;
+
+    return newState;
+}
+
 export {
     calculatePercentage,
     getTypeName,
     calculateTotalExpenses,
     getDatetime,
     sortExpensesByWeek,
-    sortExpensesByMonths
+    sortExpensesByMonths,
+    getDefaultUserData
 }

@@ -2,14 +2,29 @@ import * as Layout from '../layout';
 import AddExpenseBtn from '../components/AddExpenseBtn';
 import React, { useEffect } from 'react';
 import { useMainContext } from '../store/contexts';
-import { getCurrentUser } from '../store/database';
+import { getCurrentUser, getJWT, getData, getDatas } from '../store/database';
+import { syncData } from '../api';
+import { getDefaultUserData } from '../helpers/common';
 
 const Dashboard  = () => {
   const { state, dispatch } = useMainContext();
 
-  useEffect(() => {
-    const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ;
-    dispatch({type:"initContext", payload: isUserLogged});
+  useEffect( () => {
+    
+    async function fetchDataAndInitContext() {
+      const isUserLogged = JSON.parse( window.localStorage.getItem("logged"));
+    
+      if (isUserLogged) {
+        let data = await syncData(getCurrentUser(), getJWT());
+        await dispatch({type: "setUserData", payload: data.data});
+    
+      } else {
+        const newState = await getDefaultUserData(state);
+        await dispatch({type:"initContext", payload: newState});
+      }
+    }
+  
+    fetchDataAndInitContext();
   } , []);
 
   return (

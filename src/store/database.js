@@ -9,6 +9,10 @@ function setJWT(value) {
     window.localStorage.setItem('JWT', value);
 }
 
+function remoteJWT() {
+    window.localStorage.removeItem("JWT");
+}
+
 function getCurrentUser()
 {
     return parseInt( window.localStorage.getItem('currentUser') );
@@ -45,17 +49,21 @@ const  createTables = async () =>
     }
 }
 
-const persistData = async (data, userId) => {
+const deleteUserData = async (userId) => {
     try {
-        console.log(data)
-        
-        if (await getData(userId, "users"))  return;
-
         await alasql(`DELETE FROM Users WHERE id = ?`, [userId]);
         
         await alasql(`DELETE FROM Expenses WHERE user_id = ?`, [userId]);
         await alasql(`DELETE FROM Limit WHERE user_id = ?`, [userId]);
 
+    } catch (e) {
+        console.error(`Error occured: ${e}`)
+    }
+}
+
+const persistData = async (data, userId) => {
+    try {
+        await deleteUserData(userId);
         await alasql(`INSERT INTO Users VALUES ?`, [{ username:data.user.name, id:userId }]);
         
         await data.expenses.map(expense => {
@@ -135,8 +143,8 @@ const getDatas = (table, userId = 0) => {
     }
 }
 
-const getByDate = (table, start, end) => {
-    return (alasql(`SELECT * from Expenses WHERE date BETWEEN ? AND ?`, [start, end]));
+const getByDate = (table, start, end, userId) => {
+    return (alasql(`SELECT * from Expenses WHERE date BETWEEN ? AND ? AND user_id = ?`, [start, end, userId]));
 }
 
 const updateData = (id, table, payload) =>
@@ -189,5 +197,7 @@ export {
     getCurrentUser,
     setCurrentUser,
     getJWT, 
-    setJWT
+    setJWT,
+    remoteJWT,
+    deleteUserData
 }
