@@ -27,7 +27,7 @@ async function createDefaultUser() {
             DB.insertData("users", {id:id, username: username});
             DB.insertData("limit", {amount: limit, user_id: id});
             DB.setCurrentUser(id);
-            window.localStorage.setItem("logged", false);
+            window.localStorage.removeItem("logged");
         }
 
     } catch (e) {

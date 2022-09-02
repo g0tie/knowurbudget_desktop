@@ -5,9 +5,11 @@ import { useMainContext } from '../store/contexts';
 import { getCurrentUser, getJWT, getData, getDatas } from '../store/database';
 import { syncData } from '../api';
 import { getDefaultUserData } from '../helpers/common';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard  = () => {
   const { state, dispatch } = useMainContext();
+  const navigate = useNavigate();
 
   useEffect( () => {
     
@@ -16,6 +18,12 @@ const Dashboard  = () => {
     
       if (isUserLogged) {
         let data = await syncData(getCurrentUser(), getJWT());
+
+        if (data.status === 403) {
+          navigate("/login");
+          return;
+        }
+        
         await dispatch({type: "setUserData", payload: data.data});
     
       } else {
