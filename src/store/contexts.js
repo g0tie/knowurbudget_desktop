@@ -45,7 +45,9 @@ function MainReducer(state, action) {
         const newState = {...state,
           logged: true,
           totalExpenses,
-          expenses: userDatas.expenses,
+          expenses: userDatas.expenses.map(expense => {
+            return{...expense, remoteId: expense.id} 
+          }),
           user: {name: userDatas.username},
           limit: { value: parseInt( userDatas.limit.amount) },
         }

@@ -2,7 +2,8 @@ import Modal from "./Modal";
 import React, { useState } from 'react';
 import { useMainContext } from '../store/contexts';
 import { getDatetime, calculateTotalExpenses } from '../helpers/common';
-import { getCurrentUser, getData, getDatas, insertData } from "../store/database";
+import { getCurrentUser, getData, getDatas, getJWT, insertData } from "../store/database";
+import { addRemoteExpense } from "../api";
 
 const AddExpenseBtn = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,8 +25,11 @@ const AddExpenseBtn = () => {
             amount,
             typeid: await parseInt( type ),
             date: await getDatetime(),
-            user_id: await parseInt( getCurrentUser() )
+            user_id: await parseInt( getCurrentUser() ),
         }
+        
+        const remoteId = await addRemoteExpense(expense, getJWT());
+        expense.remoteId = remoteId;
 
         await insertData('expenses', expense);
         const expenses = await  getDatas('expenses', getCurrentUser());

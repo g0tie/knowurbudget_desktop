@@ -1,9 +1,10 @@
 import { useMainContext } from "../store/contexts";
 import React from "react";
-import { getData, deleteData, getCurrentUser } from "../store/database";
+import { getData, deleteData, getCurrentUser, getJWT } from "../store/database";
 import { calculateTotalExpenses } from "../helpers/common";
+import { removeRemoteExpense } from "../api";
 
-const Expense = ({title, amount, date, type, id}) => {
+const Expense = ({title, amount, date, type, id, remoteId}) => {
     const {state, dispatch} = useMainContext();
 
     async function removeExpense(id)
@@ -19,6 +20,7 @@ const Expense = ({title, amount, date, type, id}) => {
         };
 
         await dispatch({type:'initContext', payload:newState});
+        remoteId && await removeRemoteExpense(remoteId, getJWT());
     }
 
     return (

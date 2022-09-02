@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Modal from "./Modal";
 import { calculatePercentage } from '../helpers/common';
 import { useMainContext } from '../store/contexts';
+import { updateRemoteLimit } from '../api';
+import { getJWT } from '../store/database';
 
 
 const ProgressBar = ({}) => {
@@ -24,9 +26,10 @@ const ProgressBar = ({}) => {
     }, [state.limit.value, state.totalExpenses, limit, progress]);
     
     
-    function changeLimit()
+    async function changeLimit()
     {
-      dispatch({type:'setLimit', payload:limit});
+      await dispatch({type:'setLimit', payload:limit});
+      await updateRemoteLimit(limit, getJWT());
       setIsOpen(false);
     }
     return (

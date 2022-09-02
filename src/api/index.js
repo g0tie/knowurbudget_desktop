@@ -14,9 +14,19 @@ async function axiosWrapper(method, data, config, url ) {
                 }, 
                 config
             );
+
+            case "delete":
+                return await axios.delete(url,{
+                    params: data
+                }, 
+                config
+            );
             
             case "post":
                 return await axios.post(url, data, config);
+
+            case "put":
+                return await axios.put(url, data, config);
         }
 
     } catch (e) {
@@ -38,9 +48,26 @@ const syncData = (userId, token) => {
     return axiosWrapper("get", {userId, token}, apiConfig, `${process.env.REACT_APP_API_URL}/users/datas`);
 }
 
+function updateRemoteLimit (limit, token) {
+    return axiosWrapper("post", {limit, token}, apiConfig, `${process.env.REACT_APP_API_URL}/users/limit`);
+
+}
+
+function addRemoteExpense (expense, token) {
+    return axiosWrapper("post", {...expense, token}, apiConfig, `${process.env.REACT_APP_API_URL}/users/expenses`);
+
+}
+
+function removeRemoteExpense (expenseId, token) {
+    return axiosWrapper("delete", {...expenseId, token}, apiConfig, `${process.env.REACT_APP_API_URL}/users/expenses`);
+
+}
 
 export {
     register, 
     login,
     syncData,
+    updateRemoteLimit,
+    addRemoteExpense,
+    removeRemoteExpense
 }
