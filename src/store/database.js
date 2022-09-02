@@ -169,15 +169,15 @@ const deleteData = (id, table, userId) =>
 {
     switch (table) {
         case "expenses":
-            alasql(`DELETE FROM Expenses WHERE id = ? AND ? `, [id, userId]);
+            alasql(`DELETE FROM Expenses WHERE id = ? AND user_id = ? `, [id, userId]);
         break;
 
         case "types":
-            alasql(`DELETE FROM Types WHERE id = ?AND ? `, [id, userId]);
+            alasql(`DELETE FROM Types WHERE id = ? `, [id]);
         break;
 
         case "limit":
-            alasql(`DELETE FROM Limit WHERE id = ? AND ? `, [id, userId]);
+            alasql(`DELETE FROM Limit WHERE id = ? AND user_id = ? `, [id, userId]);
         break;
     }
 

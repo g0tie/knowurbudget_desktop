@@ -14,26 +14,10 @@ const MainContext = React.createContext();
 
 function MainReducer(state, action) {
     switch (action.type) {
+
       case 'setLimit': {
         updateData(getCurrentUser(),'limit', action.payload);
         return {...state, limit: {value: action.payload}};
-      }
-
-      case 'removeExpense': {
-        deleteData(action.payload, 'expenses', getCurrentUser());
-        return {
-          ...state,
-          expenses: state.expenses.filter(expense => expense.id !== action.payload),
-          totalExpenses: calculateTotalExpenses(state.expenses)
-        } 
-      }
-
-      case 'addExpense': {
-        insertData('expenses', action.payload);
-        return {...state,
-          expenses: getDatas('expenses', getCurrentUser()),
-          totalExpenses: calculateTotalExpenses(state.expenses)
-        };
       }
 
       case 'sortExpensesByType': {

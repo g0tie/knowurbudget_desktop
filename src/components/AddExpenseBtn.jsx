@@ -1,8 +1,8 @@
 import Modal from "./Modal";
 import React, { useState } from 'react';
 import { useMainContext } from '../store/contexts';
-import { getDatetime } from '../helpers/common';
-import { getCurrentUser } from "../store/database";
+import { getDatetime, calculateTotalExpenses } from '../helpers/common';
+import { getCurrentUser, getData, getDatas, insertData } from "../store/database";
 
 const AddExpenseBtn = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +12,8 @@ const AddExpenseBtn = () => {
     const [error, setError] = useState(false);
     const {state, dispatch} = useMainContext();
     
-    function addExpense() {
-        if (title === "") {
+    async function addExpense() {
+        if (await title === "") {
             setError('Veuillez saisir un titre');
             return;
         }
@@ -22,12 +22,22 @@ const AddExpenseBtn = () => {
         const expense = {
             name: title,
             amount,
-            typeid: parseInt( type ),
-            date: getDatetime(),
-            user_id: parseInt( getCurrentUser() )
+            typeid: await parseInt( type ),
+            date: await getDatetime(),
+            user_id: await parseInt( getCurrentUser() )
         }
-        dispatch({type:'addExpense', payload:expense});
-        setIsOpen(false);
+
+        await insertData('expenses', expense);
+        const expenses = await  getDatas('expenses', getCurrentUser());
+        const totalExpenses = await calculateTotalExpenses(expenses);
+
+        const newState = {...state,
+          expenses,
+          totalExpenses
+        };
+
+        await dispatch({type:'initContext', payload:newState});
+        await setIsOpen(false);
     }
 
     return (
