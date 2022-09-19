@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { register, syncData } from "../api";
 import Alert from "../components/Alert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useHistory } from "react-router-dom";
 import { useMainContext } from "../store/contexts";
 import { getCurrentUser, setCurrentUser, setJWT, getJWT } from "../store/database";
 
@@ -55,6 +55,12 @@ const Register = ({}) => {
       <p className="mt-2 text-center text-sm text-gray-600">
       </p>
     </div>
+    <button onClick={() => navigate(-1)}>
+      <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+      </svg>
+      Retour</span>
+    </button>
     <Alert isVisible={isVisible}/>
     <form className="mt-8 space-y-6" action="#" method="POST">
       <input type="hidden" name="remember" value="true" />

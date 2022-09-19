@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { login, syncData } from "../api";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Alert from "../components/Alert";
 import { useMainContext } from "../store/contexts";
 import { getCurrentUser, getJWT, setCurrentUser, setJWT } from "../store/database";
@@ -50,6 +50,12 @@ const Login = ({}) => {
       <img className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600" alt="Workflow" />
       <h2 className="mt-6 text-center text-3xl tracking-tight font-bold text-gray-900">Connexion</h2>
     </div>
+    <button onClick={() => navigate(-1)}>
+      <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+      </svg>
+      Retour</span>
+    </button>
     <Alert isVisible={isVisible}/>
     <form className="mt-8 space-y-6" action="#" method="POST">
       <input type="hidden" name="remember" value="true" />
