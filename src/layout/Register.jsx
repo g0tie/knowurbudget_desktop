@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { register, syncData } from "../api";
 import Alert from "../components/Alert";
-import { useNavigate, Link, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMainContext } from "../store/contexts";
 import { getCurrentUser, setCurrentUser, setJWT, getJWT } from "../store/database";
 
