@@ -2,6 +2,7 @@ import {MainProvider, useMainContext, MainContext} from "./store/contexts"
 import * as Layout from "./layout";
 import Dashboard from "./layout/Dashboard";
 import { useLocation, Navigate } from "react-router-dom";
+import  TrayWidget  from "./components/TrayWidget";
 
 import React, { useEffect } from "react";
 import {
@@ -19,6 +20,10 @@ function App() {
         <Routes>
               <Route path="/" element={
                   <Dashboard />
+              } />
+
+              <Route path="/widget" element={
+                  <TrayWidget />
               } />
               
               <Route path="/login" element={
