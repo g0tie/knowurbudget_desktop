@@ -17,7 +17,7 @@ const createWindow = () => {
 
   let  tray = new Tray(path.join(__dirname,'./chart.png' ));
   let widgetWindow = new BrowserWindow({ 
-    width: 380, 
+    width: 400, 
     height: 400,
     fullscreenable: false,
     resizable: false,
@@ -27,6 +27,7 @@ const createWindow = () => {
     `file://${path.join(__dirname, '../build/index.html')}`;
 
   widgetWindow.loadURL(widgetUrl);
+  widgetWindow.webContents.openDevTools()
 
   TrayWindow.setOptions({tray: tray,window: widgetWindow});
 }

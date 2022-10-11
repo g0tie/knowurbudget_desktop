@@ -2,10 +2,32 @@ import ProgressBar from "./ProgressBar";
 import Graph from "./Graph"
 import { sortExpensesByWeek } from "../helpers/common";
 import { useMainContext } from "../store/contexts";
+import React, { useEffect } from 'react';
+import { getCurrentUser, getJWT, getData, getDatas } from '../store/database';
+import { syncData } from '../api';
+import { getDefaultUserData } from '../helpers/common';
 
 const TrayWidget = () => {
 
-    const {state} = useMainContext();
+    const {state, dispatch} = useMainContext();
+
+    useEffect( () => {
+    
+      async function fetchDataAndInitContext() {
+        const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ?? false;
+      
+        if (isUserLogged) {
+          let data = await syncData(getCurrentUser(), state.csrf);
+          await dispatch({type: "setUserData", payload: data.data});
+      
+        } else {
+          const newState = await getDefaultUserData(state);
+          await dispatch({type:"initContext", payload: newState});
+        }
+      }
+    
+      fetchDataAndInitContext();
+    } , []);
 
     const pieData = {
       labels: state.types.map(type => type.name),
@@ -37,7 +59,8 @@ const TrayWidget = () => {
     };
 
     return (
-        <div className="">
+        <div className="flex flex-col items-center	">
+            <h1 className="text-center text-2xl font-bold">Limite mensuelle</h1>
             <ProgressBar showEditBtn={false} />
             <Graph title="Cette semaine" type="pie" data={pieData}/>
         </div>

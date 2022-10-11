@@ -3,7 +3,6 @@ import Modal from "./Modal";
 import { calculatePercentage } from '../helpers/common';
 import { useMainContext } from '../store/contexts';
 import { updateRemoteLimit } from '../api';
-import { getJWT } from '../store/database';
 import { useMediaQuery } from 'react-responsive'
 
 
@@ -24,7 +23,7 @@ const ProgressBar = ({showEditBtn = true}) => {
     useEffect(() => {
       setProgress(calculatePercentage(state.totalExpenses, state.limit.value));
       setProgressColor();
-
+      console.log(state)
     }, [state.limit.value, state.totalExpenses, limit, progress]);
     
     
