@@ -1,31 +1,40 @@
-const electron = require('electron'),
-  app = electron.app,
-  BrowserWindow = electron.BrowserWindow;
-   
 const path = require('path'),
   isDev = require('electron-is-dev');
    
 let mainWindow;
+const {Tray, ipcMain, BrowserWindow, app} = require("electron") 
+var trayWindow, tray;
 const TrayWindow = require("electron-tray-window");
-const {Tray} = require("electron") 
-  
+
 const createWindow = () => {
   mainWindow = new BrowserWindow({ width: 1064, height: 768 })
+
   const appUrl = isDev ? 'http://localhost:3000' :
     `file://${path.join(__dirname, '../build/index.html')}`
   mainWindow.loadURL(appUrl)
   mainWindow.maximize()
   mainWindow.on('closed', () => mainWindow = null);
 
-  widgetWindow = new BrowserWindow({ width:340, height: 400});
+  let  tray = new Tray(path.join(__dirname,'./chart.png' ));
+  let widgetWindow = new BrowserWindow({ 
+    width: 380, 
+    height: 400,
+    fullscreenable: false,
+    resizable: false,
+    autoHideMenuBar: true,
+  });
   const widgetUrl = isDev ? 'http://localhost:3000/widget' :
-  `file://${path.join(__dirname, '../build/widget.html')}`
-  
-  let tray = new Tray();
-  trayWindow.setOptions({tray: tray, window: widgetWindow});
-  
+    `file://${path.join(__dirname, '../build/index.html')}`;
+
+  widgetWindow.loadURL(widgetUrl);
+
+  TrayWindow.setOptions({tray: tray,window: widgetWindow});
 }
-app.on('ready', createWindow)
+
+app.on('ready', () => {
+  createWindow();
+});
+
 app.on('window-all-closed', () => {
  
   if (process.platform !== 'darwin') { app.quit() }
