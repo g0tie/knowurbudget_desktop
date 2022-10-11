@@ -27,8 +27,6 @@ const createWindow = () => {
     `file://${path.join(__dirname, '../build/index.html')}`;
 
   widgetWindow.loadURL(widgetUrl);
-  widgetWindow.webContents.openDevTools()
-
   TrayWindow.setOptions({tray: tray,window: widgetWindow});
 }
 
