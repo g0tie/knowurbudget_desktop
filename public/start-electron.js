@@ -10,7 +10,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({ width: 1064, height: 768 })
 
   const appUrl = isDev ? 'http://localhost:3000' :
-    `file://${path.join(__dirname, '../build/index.html')}`
+    `file://${path.join(__dirname, './index.html')}`
   mainWindow.loadURL(appUrl)
   mainWindow.maximize()
   mainWindow.on('closed', () => mainWindow = null);
@@ -24,7 +24,7 @@ const createWindow = () => {
     autoHideMenuBar: true,
   });
   const widgetUrl = isDev ? 'http://localhost:3000/widget' :
-    `file://${path.join(__dirname, '../build/index.html')}`;
+    `file://${path.join(__dirname, './index.html#/widget')}`;
 
   const contextMenu = Menu.buildFromTemplate([
     { 

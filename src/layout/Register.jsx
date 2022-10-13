@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { register, syncData } from "../api";
 import Alert from "../components/Alert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation} from "react-router-dom";
 import { useMainContext } from "../store/contexts";
 import { getCurrentUser, setCurrentUser } from "../store/database";
 
@@ -12,6 +12,7 @@ const Register = ({}) => {
     const [firstName, setFirstName] = useState('');
     const [isVisible, setVisible] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const { state, dispatch } = useMainContext();
 
     async function handleSubmit (e) {

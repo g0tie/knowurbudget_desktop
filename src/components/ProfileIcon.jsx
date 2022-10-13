@@ -1,7 +1,7 @@
 import { useState } from "react";
 import React from "react";
 import { useMainContext } from "../store/contexts";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { setCurrentUser, deleteUserData, getCurrentUser } from "../store/database";
 import  {getDefaultUserData} from "../helpers/common";
 import {logout} from "../api/";
@@ -11,6 +11,7 @@ const ProfileIcon = ({username}) => {
     const [isOpen, setIsOpen] = useState(false);
     const { state, dispatch } = useMainContext();
     const navigate = useNavigate();
+    const location = useLocation();
 
    async function handleLogout(e)
    {
@@ -59,9 +60,9 @@ const ProfileIcon = ({username}) => {
                      }
                   </div>
                }
-               { !state.logged && <a className="mt-2 block px-4 py-2 hover:bg-budget hover:text-white" href="#" onClick={() => navigate('/login')}>Connexion / Inscription</a>}
+               { !state.logged && <a className="mt-2 block px-4 py-2 hover:bg-budget hover:text-white" href="#/login">Connexion / Inscription</a>}
 
-               { state.logged && <a className="mt-2 block px-4 py-2 hover:bg-budget hover:text-white" href="#" onClick={handleLogout}>Déconnexion</a> }
+               { state.logged && <a className="mt-2 block px-4 py-2 hover:bg-budget hover:text-white" onClick={handleLogout}>Déconnexion</a> }
             </div>
          }
          

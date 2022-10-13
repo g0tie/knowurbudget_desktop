@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { login, syncData } from "../api";
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Alert from "../components/Alert";
 import { useMainContext } from "../store/contexts";
 import { getDefaultUserData } from '../helpers/common';
@@ -10,6 +10,7 @@ const Login = ({}) => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const {state, dispatch} = useMainContext();
     const [isVisible, setVisible] = useState(false);
 
@@ -98,7 +99,7 @@ const Login = ({}) => {
         </button>
 
         <a 
-        onClick={(e) =>  navigate("/register")}
+        href="#/register"
         type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-300 hover:cursor-pointer hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           <span className="absolute left-0 inset-y-0 flex items-center pl-3">
             <svg className="h-5 w-5 text-white group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

@@ -7,6 +7,8 @@ import  TrayWidget  from "./components/TrayWidget";
 import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
+  HashRouter,
+  MemoryRouter,
   Routes,
   Route,
   Link
@@ -16,7 +18,7 @@ import {
 function App() {
   return (
     <MainProvider>
-      <Router>
+      <HashRouter>
         <Routes>
               <Route path="/" element={
                   <Dashboard />
@@ -38,7 +40,7 @@ function App() {
               }/>
               <Route path="*" element={ <Layout.NotFound />} />
         </Routes>
-      </Router>
+      </HashRouter>
     </MainProvider>
   );
 }

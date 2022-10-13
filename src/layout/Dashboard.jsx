@@ -5,11 +5,12 @@ import { useMainContext } from '../store/contexts';
 import { getCurrentUser, getJWT, getData, getDatas } from '../store/database';
 import { syncData } from '../api';
 import { getDefaultUserData } from '../helpers/common';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Dashboard  = () => {
   const { state, dispatch } = useMainContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect( () => {
     
@@ -19,7 +20,7 @@ const Dashboard  = () => {
       if (isUserLogged) {
         let data = await syncData(getCurrentUser(), state.csrf);
         if (data.status === 403) {
-          navigate("/login");
+          window.location.hash = '#/login';
           return;
         }
         
