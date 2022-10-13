@@ -38,8 +38,13 @@ const createWindow = () => {
   ]);
   tray.setContextMenu(contextMenu);
 
+
+
+  tray.on('click',  () => widgetWindow.reload());
+
   widgetWindow.loadURL(widgetUrl);
   TrayWindow.setOptions({tray: tray,window: widgetWindow});
+
 
 }
 
