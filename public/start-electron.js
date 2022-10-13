@@ -23,8 +23,8 @@ const createWindow = () => {
     resizable: false,
     autoHideMenuBar: true,
   });
-  const widgetUrl = isDev ? 'http://localhost:3000/widget' :
-    `file://${path.join(__dirname, './index.html#/widget')}`;
+  const widgetUrl = isDev ? 'http://localhost:3000#/widget' :
+    `file://${path.join(__dirname, './index.html')}#/widget`;
 
   const contextMenu = Menu.buildFromTemplate([
     { 
@@ -32,6 +32,7 @@ const createWindow = () => {
       type: 'normal',  
       click () {
         tray.destroy();
+        app.quit();
       } 
   },
   ]);
