@@ -2,7 +2,7 @@ const path = require('path'),
   isDev = require('electron-is-dev');
    
 let mainWindow;
-const {Tray, ipcMain, BrowserWindow, app} = require("electron") 
+const {Tray, Menu, ipcMain, BrowserWindow, app} = require("electron") 
 var trayWindow, tray;
 const TrayWindow = require("electron-tray-window");
 
@@ -26,8 +26,20 @@ const createWindow = () => {
   const widgetUrl = isDev ? 'http://localhost:3000/widget' :
     `file://${path.join(__dirname, '../build/index.html')}`;
 
+  const contextMenu = Menu.buildFromTemplate([
+    { 
+      label: 'Quitter', 
+      type: 'normal',  
+      click () {
+        tray.destroy();
+      } 
+  },
+  ]);
+  tray.setContextMenu(contextMenu);
+
   widgetWindow.loadURL(widgetUrl);
   TrayWindow.setOptions({tray: tray,window: widgetWindow});
+
 }
 
 app.on('ready', () => {
