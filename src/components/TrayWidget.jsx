@@ -60,7 +60,6 @@ const TrayWidget = () => {
 
     return (
         <div className="flex flex-col items-center	">
-            <h1 className="text-center text-2xl font-bold">Limite mensuelle</h1>
             <ProgressBar showEditBtn={false} />
             <Graph title="Cette semaine" type="pie" data={pieData}/>
         </div>

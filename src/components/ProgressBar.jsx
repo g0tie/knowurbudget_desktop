@@ -7,7 +7,7 @@ import { getJWT } from '../store/database';
 import { useMediaQuery } from 'react-responsive'
 
 
-const ProgressBar = ({}) => {
+const ProgressBar = ({showEditBtn = true}) => {
     let {state, dispatch} = useMainContext();
     
     const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +45,8 @@ const ProgressBar = ({}) => {
  
       <div className="flex felx-row justify-end">
          <span className="text-right">{state.totalExpenses} € / {state.limit.value}</span>
-         <button 
+        
+        { showEditBtn && <button 
          onClick={() => setIsOpen(true)}
          style={{transform: "translateY(-13px)"}} className="text-budget text-center ml-2 shadow-lg rounded-full bg-white h-10 w-10">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor">
@@ -53,6 +54,7 @@ const ProgressBar = ({}) => {
               <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
             </svg>
         </button>
+        }
       </div>
 
 
