@@ -180,11 +180,10 @@ const getByDate = (table, start, end, userId) => {
  */
 const updateData = async (id, userId, table, payload) =>
 {
-    console.log([payload.name, payload.amount, payload.typeid, id, userId])
     try {
         switch (table) {
             case "expenses":
-                console.log( await alasql(`UPDATE Expenses SET name = ?, amount = ?, typeid = ? WHERE id = ? AND user_id = ?`, [payload.name, payload.amount, payload.typeid, id, userId]));
+                await alasql(`UPDATE Expenses SET name = ?, amount = ?, typeid = ? WHERE id = ? AND user_id = ?`, [payload.name, payload.amount, payload.typeid, id, userId]);
             break;
     
             case "types":

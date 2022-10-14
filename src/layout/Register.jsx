@@ -26,9 +26,9 @@ const Register = ({}) => {
       });
 
       if (response.status !== 200) {
-        dispatch({type:"setError", payload: response.message});
-        dispatch({type: "setLoggedState", payload: false});
-        setVisible(true);
+        await dispatch({type:"setError", payload: response.message});
+        await dispatch({type: "setLoggedState", payload: false});
+        await setVisible(true);
         return;
       } 
       await setCurrentUser(response.data.id);

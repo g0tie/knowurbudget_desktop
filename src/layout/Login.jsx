@@ -24,16 +24,15 @@ const Login = ({}) => {
       });
 
       if (response.status !== 200) {
-        dispatch({type:"setError", payload: response.message});
-        dispatch({type: "setLoggedState", payload: false});
-        setVisible(true);
+        await dispatch({type:"setError", payload: response.message});
+        await dispatch({type: "setLoggedState", payload: false});
+        await setVisible(true);
         return;
       } 
       await setCurrentUser(response.data.id);
       let data = await syncData(getCurrentUser(), response.data.csrf);
       await dispatch({type: "setCSRF", payload: data.data.csrf}); // no token foun because set cookie not exist
 
-      await console.log(state, data.data);
 
       await dispatch({type: "setUserData", payload: data.data});
       dispatch({type: "setError", payload: false});
@@ -47,7 +46,6 @@ const Login = ({}) => {
     {
       await setCurrentUser(0);
       const newState = await getDefaultUserData(state);
-      await console.log(newState)
       await dispatch({type:"initContext", payload: newState});
       await navigate("/");
       await window.localStorage.removeItem("logged");
