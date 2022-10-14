@@ -4,6 +4,7 @@ import Alert from "../components/Alert";
 import { useNavigate, useLocation} from "react-router-dom";
 import { useMainContext } from "../store/contexts";
 import { getCurrentUser, setCurrentUser } from "../store/database";
+import AppIcon from "../components/AppIcon";
 
 const Register = ({}) => {
     const [password, setPassword] = useState('');
@@ -48,7 +49,7 @@ const Register = ({}) => {
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div className="max-w-md w-full space-y-8">
     <div>
-      <img className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600" alt="Workflow" />
+      <AppIcon absolute={true} />
       <h2 className="mt-6 text-center text-3xl tracking-tight font-bold text-gray-900">Inscription</h2>
       <p className="mt-2 text-center text-sm text-gray-600">
       </p>

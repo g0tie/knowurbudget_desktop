@@ -3,10 +3,11 @@ import Modal from "./Modal";
 import { calculatePercentage } from '../helpers/common';
 import { useMainContext } from '../store/contexts';
 import { updateRemoteLimit } from '../api';
+import { getJWT } from '../store/database';
 import { useMediaQuery } from 'react-responsive'
 
 
-const ProgressBar = ({showEditBtn = true}) => {
+const ProgressBar = ({}) => {
     let {state, dispatch} = useMainContext();
     
     const [isOpen, setIsOpen] = useState(false);
@@ -17,13 +18,13 @@ const ProgressBar = ({showEditBtn = true}) => {
 
     function setProgressColor() {
       if (progress > 97) setColor("#dc2626")
-      else setColor("#715BFD")
+      else setColor("#22d3ee")
     }
 
     useEffect(() => {
       setProgress(calculatePercentage(state.totalExpenses, state.limit.value));
       setProgressColor();
-      console.log(state)
+
     }, [state.limit.value, state.totalExpenses, limit, progress]);
     
     
@@ -36,26 +37,22 @@ const ProgressBar = ({showEditBtn = true}) => {
     }
     return (
       <div className="flex flex-col" style={{width: isMobile ? "300px" : "400px"}}>
-        
+        <h1 className='font-bold md:text-xl'>Limite mensuelle</h1>
         <div className="bg-gray-200  h-10" >
             <div className={`h-10`} style={{width: progress + "%", backgroundColor: color}}></div>
         </div>
         
  
       <div className="flex felx-row justify-end">
-         <span className="text-right">{state.totalExpenses} / {state.limit.value}</span>
-         
-         { showEditBtn &&
-            <button 
-            onClick={() => setIsOpen(true)}
-            style={{transform: "translateY(-13px)"}} className="text-budget text-center ml-2 shadow-lg rounded-full bg-white h-10 w-10">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                  <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                </svg>
-            </button>
-        }
-
+         <span className="text-right">{state.totalExpenses} € / {state.limit.value}</span>
+         <button 
+         onClick={() => setIsOpen(true)}
+         style={{transform: "translateY(-13px)"}} className="text-budget text-center ml-2 shadow-lg rounded-full bg-white h-10 w-10">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+              <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+            </svg>
+        </button>
       </div>
 
 

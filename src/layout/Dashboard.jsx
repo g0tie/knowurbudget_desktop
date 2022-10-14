@@ -36,10 +36,10 @@ const Dashboard  = () => {
   } , []);
 
   return (
-    <div className="App md:p-8 xs:p-0">
+    <div className="App md:p-8 xs:p-0  bg-slate-50">
     <Layout.Header />
 
-    <div className='xs:flex-wrap xs:flex-col lg:flex-wrap xl:flex-nowrap flex xl:flex-row justify-evenly md:items-center xs:overflow-hidden'>
+    <div className='xs:flex-wrap xs:flex-col lg:flex-wrap xl:flex-nowrap flex xl:flex-row justify-evenly md:items-center xs:overflow-hidden' style={{minHeight:"70vh"}}>
         <Layout.History />
         <Layout.Graphics />
     </div>
