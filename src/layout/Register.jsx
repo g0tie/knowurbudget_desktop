@@ -3,46 +3,48 @@ import { register, syncData } from "../api";
 import Alert from "../components/Alert";
 import { useNavigate, useLocation} from "react-router-dom";
 import { useMainContext } from "../store/contexts";
-import { getCurrentUser, setCurrentUser } from "../store/database";
+import { getCurrentUser, setCurrentUser, persistData } from "../store/database";
 import AppIcon from "../components/AppIcon";
 
 const Register = ({}) => {
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [isVisible, setVisible] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { state, dispatch } = useMainContext();
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [isVisible, setVisible] = useState(false);
+  const navigate = useNavigate();
+  const { state, dispatch } = useMainContext();
 
-    async function handleSubmit (e) {
-      e.preventDefault();
-      
-      let response = await register({
-        username: firstName,
-        password,
-        email
-      });
+  async function handleSubmit (e) {
+    e.preventDefault();
+    
+    let response = await register({
+      username: firstName,
+      password,
+      email
+    });
 
-      if (response.status !== 200) {
-        await dispatch({type:"setError", payload: response.message});
-        await dispatch({type: "setLoggedState", payload: false});
-        await setVisible(true);
-        return;
-      } 
-      await setCurrentUser(response.data.id);
+    if (response.status !== 200) {
+      await dispatch({type:"setError", payload: response.data.message ?? response.data.errors[0].msg});
+      await dispatch({type: "setLoggedState", payload: false});
+      await  window.localStorage.removeItem("logged")
+      await setVisible(true);
+      return;
+    } 
+    await setCurrentUser(response.data.id);
 
-      let data = await syncData(getCurrentUser(), response.data.csrf).data;
-      await dispatch({type: "setCSRF", payload: data.data.csrf});
+    let data = await syncData(getCurrentUser(), response.data.csrf);
+    await dispatch({type: "setCSRF", payload: data.data.csrf});
 
-      dispatch({type: "setUserData", payload: data.data});
-      dispatch({type: "setError", payload: false});
-      dispatch({type: "setLoggedState", payload: true});
-      
-      setVisible(false);
-      navigate("/");
-    }
+    await dispatch({type: "setUserData", payload: data.data});
+    await persistData(state, getCurrentUser());
+    
+    await dispatch({type: "setError", payload: false});
+    await dispatch({type: "setLoggedState", payload: true});
+    
+    setVisible(false);
+    navigate("/");
+  }
 
     return (
         

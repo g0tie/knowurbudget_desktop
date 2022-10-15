@@ -2,7 +2,7 @@ import * as Layout from '../layout';
 import AddExpenseBtn from '../components/AddExpenseBtn';
 import React, { useEffect } from 'react';
 import { useMainContext } from '../store/contexts';
-import { getCurrentUser, getJWT, getData, getDatas } from '../store/database';
+import { getCurrentUser, persistData } from '../store/database';
 import { syncData } from '../api';
 import { getDefaultUserData } from '../helpers/common';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,28 +10,17 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const Dashboard  = () => {
   const { state, dispatch } = useMainContext();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect( () => {
     
     async function fetchDataAndInitContext() {
-      const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ?? false;
-    
-      if (isUserLogged) {
-        let data = await syncData(getCurrentUser(), state.csrf);
-        if (data.status === 403) {
-          window.location.hash = '#/login';
-          return;
-        }
-        
-        await dispatch({type: "setUserData", payload: data.data});
-    
-      } else {
+
+      if (!state.logged) {
         const newState = await getDefaultUserData(state);
         await dispatch({type:"initContext", payload: newState});
       }
     }
-  
+
     fetchDataAndInitContext();
   } , []);
 

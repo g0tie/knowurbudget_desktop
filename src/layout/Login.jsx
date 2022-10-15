@@ -1,56 +1,84 @@
 import React, { useEffect, useState } from "react";
-import { login, syncData } from "../api";
+import { login, syncData,syncDataFromLocal } from "../api";
 import { useLocation, useNavigate } from 'react-router-dom'
 import Alert from "../components/Alert";
 import { useMainContext } from "../store/contexts";
-import { getDefaultUserData } from '../helpers/common';
-import { getCurrentUser, getJWT, setCurrentUser } from "../store/database";
+import { calculateTotalExpenses, getDefaultUserData } from '../helpers/common';
+import { getCurrentUser, persistData, setCurrentUser } from "../store/database";
 import AppIcon from "../components/AppIcon";
 
 const Login = ({}) => {
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
-    const navigate = useNavigate();
-    const location = useLocation();
-    const {state, dispatch} = useMainContext();
-    const [isVisible, setVisible] = useState(false);
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+  const {state, dispatch} = useMainContext();
+  const [isVisible, setVisible] = useState(false);
 
-    async function handleSubmit (e) {
-      e.preventDefault();
-      
-      let response = await login({
-        password,
-        email
-      });
+  async function handleSubmit (e) {
+    e.preventDefault();
+    const isUserLogged = await JSON.parse( window.localStorage.getItem("logged")) ?? false;
+    let data, csrf;
 
-      if (response.status !== 200) {
-        await dispatch({type:"setError", payload: response.message});
+    let response = await login({
+      password,
+      email
+    });
+
+    if (response.status !== 200) {
+      await dispatch({type:"setError", payload: response.data.message ?? response.data.errors[0].msg});
+      await dispatch({type: "setLoggedState", payload: false});
+      await  window.localStorage.removeItem("logged")
+      await setVisible(true);
+      return;
+    } 
+    csrf = response.data.csrf;
+
+    if (isUserLogged) {
+      data = await syncDataFromLocal(state, csrf);
+      csrf = data.data.csrf;
+      if (data?.status !== 200) {
+        await dispatch({type:"setError", payload: response.data?.message ?? response.data.errors[0].msg});
         await dispatch({type: "setLoggedState", payload: false});
-        await setVisible(true);
-        return;
-      } 
-      await setCurrentUser(response.data.id);
-      let data = await syncData(getCurrentUser(), response.data.csrf);
-      await dispatch({type: "setCSRF", payload: data.data.csrf}); // no token foun because set cookie not exist
-
-
-      await dispatch({type: "setUserData", payload: data.data});
-      dispatch({type: "setError", payload: false});
-      dispatch({type: "setLoggedState", payload: true});
-      
-      setVisible(false);
-      navigate("/");
+        await  window.localStorage.removeItem("logged")
+      }
     }
 
-    async function switchToDefaultUser()
-    {
-      await setCurrentUser(0);
-      const newState = await getDefaultUserData(state);
-      await dispatch({type:"initContext", payload: newState});
-      await navigate("/");
-      await window.localStorage.removeItem("logged");
+    await setCurrentUser(response.data.id);
+    data = await syncData(getCurrentUser(),csrf) ;
+
+    const newData = data.data.user;
+    const newState = await {
+      ...state,
+      csrf: data.data.csrf,
+      logged: true,
+      expenses: newData.expenses.map(expense => {
+        return{...expense, remoteId: expense.id, typeid: expense.typeid ?? expense.typeId} 
+      }),
+      user: {name: newData.username},
+      limit: { value: parseInt( newData.limit.amount) },
+      totalExpenses: calculateTotalExpenses(newData.expenses)
     }
 
+    await dispatch({type: "setUserData", payload: newState});
+    await persistData(newState, getCurrentUser());
+    
+    await dispatch({type: "setError", payload: false});
+    await dispatch({type: "setLoggedState", payload: true});
+    
+    await window.localStorage.setItem("lastlog", new Date());
+    
+    setVisible(false);
+    navigate("/");
+  }
+
+  async function switchToDefaultUser()
+  {
+    await setCurrentUser(0);
+    const newState = await getDefaultUserData(state);
+    await dispatch({type:"initContext", payload: newState});
+    await navigate("/");
+    await window.localStorage.removeItem("logged");
+  }
     return (
         
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

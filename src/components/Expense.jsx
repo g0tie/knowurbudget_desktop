@@ -9,12 +9,13 @@ import Modal from "./Modal";
 import { useState } from "react";
 
 const Expense = ({title, amount, date, type, id, remoteId, typeId}) => {
-    const {state, dispatch} = useMainContext();
+  const {state, dispatch} = useMainContext();
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState(false);
     const [expenseTitle, setExpenseTitle] = useState(title);
     const [expenseAmount, setExpenseAmount] = useState(amount);
     const [expenseType, setExpenseType] = useState(typeId);
+    let csrf;
 
     async function removeExpense(id)
     {
@@ -31,7 +32,7 @@ const Expense = ({title, amount, date, type, id, remoteId, typeId}) => {
         await dispatch({type:'initContext', payload:newState});
 
         data = remoteId && await removeRemoteExpense(remoteId, state.csrf);
-        await dispatch({type: "setCSRF", payload:data.csrf});
+        await dispatch({type: "setCSRF", payload:data.data.csrf});
     }
 
     async function updateExpense()
@@ -44,6 +45,7 @@ const Expense = ({title, amount, date, type, id, remoteId, typeId}) => {
 
       const expense = {
           id,
+          remoteId,
           name: expenseTitle,
           amount: expenseAmount,
           typeid: await parseInt( expenseType ),
@@ -53,11 +55,12 @@ const Expense = ({title, amount, date, type, id, remoteId, typeId}) => {
 
       const isUserLogged = JSON.parse( window.localStorage.getItem("logged")) ?? false;
       
-      if (isUserLogged) {
-
+      if (state.logged) {
+          console.log(expense)
           const data = await updateRemoteExpense(expense, state.csrf);
-          expense.remoteId = data.value;
-          await dispatch({type:"setCSRF", payload:data.csrf});
+          csrf = await data.data.csrf;
+
+          await dispatch({type:"setCSRF", payload:data.data.csrf});
       }
 
       await updateData(id, parseInt(getCurrentUser()), 'expenses', expense);
@@ -65,14 +68,14 @@ const Expense = ({title, amount, date, type, id, remoteId, typeId}) => {
       const totalExpenses = await calculateTotalExpenses(expenses);
       const newState = {...state,
         expenses,
-        totalExpenses
+        totalExpenses,
+        csrf
       };
 
       await dispatch({type:'initContext', payload:newState});
       await setIsOpen(false);
       setIsOpen(false)
     }
-
     return (
       <>
       <div className="hover:cursor-pointer hover:bg-gray-100 rounded-lg bg-white shadow-lg max-w-md w-full mb-2" 

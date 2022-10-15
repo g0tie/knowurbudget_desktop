@@ -46,22 +46,7 @@ function MainReducer(state, action) {
       }
       
       case 'setUserData': {
-        const userDatas = action.payload;
-        const totalExpenses = calculateTotalExpenses(userDatas.user.expenses);
-        const newState = {...state,
-          csrf: userDatas.csrf,
-          logged: true,
-          totalExpenses,
-          expenses: userDatas.user.expenses.map(expense => {
-            return{...expense, remoteId: expense.id} 
-          }),
-          user: {name: userDatas.user.username},
-          limit: { value: parseInt( userDatas.user.limit.amount) },
-        }
-
-        persistData(newState, getCurrentUser());
-        
-        return newState
+        return action.payload
       }
 
       case 'initContext': {
@@ -93,7 +78,7 @@ function MainProvider({children}) {
         expenses,
         totalExpenses,
         user: {
-          name:"Pablo"
+          name:"Mode hors ligne"
         },
         error:false,
         logged: false,
