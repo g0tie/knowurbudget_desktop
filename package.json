@@ -2,7 +2,7 @@
   "name": "knowurbudget_app",
   "homepage": "./",
   "main": "public/start-electron.js",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -29,6 +29,9 @@
       "build/**/*",
       "node_modules/**/*"
     ],
+    "win": {
+     "icon": "./build/icon.png"
+   },
     "directories": {
       "buildResources": "assets"
     }
