@@ -18,7 +18,7 @@ const createWindow = () => {
   let  tray = new Tray(path.join(__dirname,'./chart.png' ));
   let widgetWindow = new BrowserWindow({ 
     width: 400, 
-    height: 400,
+    height: 600,
     fullscreenable: false,
     resizable: false,
     autoHideMenuBar: true,
